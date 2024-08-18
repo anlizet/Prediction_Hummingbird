@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificador de Colibríes</title>
+</head>
+<body>
+    <h1>Sube una Imagen para Clasificación de Colibríes</h1>
+    <form action="/predict" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required>
+        <input type="submit" value="Clasificar">
+    </form>
+    <div id="result"></div>
+
+    <script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        fetch('/predict', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('result').innerText =
+                'Etiqueta predicha: ' + (data.label || 'Error al procesar la imagen') +
+                ', Probabilidad: ' + (data.probability || 'N/A');
+        })
+        .catch(error => {
+            document.getElementById('result').innerText = 'Error al procesar la imagen';
+        });
+    });
+</script>
+</body>
+</html>
